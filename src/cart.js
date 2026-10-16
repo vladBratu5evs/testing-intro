@@ -41,9 +41,49 @@ if (!existingItem) {
   }
 
 
-function removeFromCart() { return notImplemented(); }
-function calculateCartSubtotal() { return notImplemented(); }
-function calculateOrderTotal() { return notImplemented(); }
+function removeFromCart(cart, product) {
+const existingItem = cart.find(item => item.id === product);
+if (!existingItem) {
+  return cart;
+}
+return cart.filter(item => item.id !== product);
+}
+
+
+
+
+
+function calculateCartSubtotal(cart) {
+return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+}
+
+
+
+
+
+function calculateOrderTotal(cart, code) {
+const subtotal = calculateCartSubtotal(cart);
+let delivery = 30000;
+let discount = 0;
+let total = 0;
+
+if (code !== 'SAVE10' && subtotal < 49999) {
+  total = subtotal + delivery;
+}
+if (subtotal >= 50000) {
+  total=subtotal;
+  delivery = 0;
+}
+if (code === 'SAVE10' && subtotal >= 20000) {
+  discount = subtotal * 0.1;
+  total = (subtotal - discount) + delivery;
+}
+if (code === 'SAVE10' && subtotal <20000) {
+  total = subtotal + delivery;
+}
+return {subtotal, discount, delivery, total};
+
+  }
 
 const cartApi = { addToCart, changeQuantity, removeFromCart, calculateCartSubtotal, calculateOrderTotal };
 
